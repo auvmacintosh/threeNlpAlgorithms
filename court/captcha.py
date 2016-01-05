@@ -117,7 +117,6 @@ class Captcha(object):
     self.im2bin()
 
     result = ""
-    log = {'m': []}
     for pos in basepos:
       better_trys = []
       for de in CAPTCHADICT:
@@ -144,23 +143,13 @@ class Captcha(object):
           maxchar = t[0]['char']
           maxrate = rate
           maxdata = t
-      print maxrate, maxchar, maxbase
-      log['m'].append({'c': maxchar, 'pi': maxdata[1], 'pj': maxdata[
-                      2], 'r': maxrate})
+      #print maxrate, maxchar, maxbase
       result += maxchar
 
       """remove identified char from image(self.binim)"""
       self.removechar(maxdata[0], maxdata[1], maxdata[2])
 
-    log['c'] = result
-    self.log_data = log
     return result
-
-  def log(self):
-    f = open('captcha.log', 'a')
-    f.write(json.dumps(self.log_data))
-    f.write('\n')
-    f.close()
 
   def charmatch(self, de, basei, basej, partly=False):
     matches = 0
