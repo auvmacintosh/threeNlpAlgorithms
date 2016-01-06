@@ -33,6 +33,8 @@ public class Extractor {
     }
 
     public String extractString(String str) throws Exception {
+        if(str.isEmpty()) //空字符串直接不转换
+            return "<title></title><content></content>";
 
         ArticleTextExtractor extractor = new ArticleTextExtractor();
 
