@@ -31,9 +31,10 @@ class CaptchaError(Exception):
 class Shixin:
 
   def __init__(self):
-    self.cookie = ''
+    self.cookie = {}
     self.randcode = ''
-    self.conn = sqlite3.connect(os.path.join(os.path.split(os.path.realpath(__file__))[0], DB))
+    self.conn = sqlite3.connect(os.path.join(
+      os.path.split(os.path.realpath(__file__))[0], DB))
 
   def get_captcha(self):
     data = res = None
@@ -47,7 +48,7 @@ class Shixin:
 
       if res.code == 521:
         time.sleep(1)
-        self.cookie = util.init_cookie(data, res)
+        self.cookie = util.update_cookie(data, res, self.cookie)
         logging.info("Got 521, refresh cookie: %s", self.cookie)
       if res.code == 200:
         break
@@ -62,7 +63,7 @@ class Shixin:
 
       if 'Set-Cookie' in res.headers:
         new_cookie = res.headers['Set-Cookie'].split(' ')[0]
-        self.cookie += ' ' + new_cookie
+        self.cookie.update(dict((new_cookie.strip(';').split('='),)))
         logging.info("Got cookie with captcha: %s", new_cookie)
     except Exception, ex:
       logging.error(str(ex))
@@ -86,14 +87,17 @@ class Shixin:
         break
       cur.execute('SELECT count(*) FROM shixin')
       data = cur.fetchone()
+      before_item_count = data[0]
       logging.info("[%d] lines in Database" % data[0])
       for item in items:
-        cur.execute("INSERT OR IGNORE INTO shixin (id, number, name, date) VALUES(%s, '%s', '%s', '%s')" % item)
+        cur.execute(
+          "INSERT OR IGNORE INTO shixin (id, number, name, date) VALUES(%s, '%s', '%s', '%s')" % item)
       self.conn.commit()
 
       cur.execute('SELECT count(*) FROM shixin')
       data = cur.fetchone()
-      logging.info("[%d] lines in Database after add [%d] items" % (data[0], len(items)))
+      logging.info("[%d] lines in Database after add [%d] items. [%d] NEW." %
+                   (data[0], len(items), int(data[0]) - int(before_item_count)))
 
   def _list_page_crawler(self, page=1, page_size=LIST_PAGE_SIZE):
     data = {
@@ -129,24 +133,57 @@ class Shixin:
 
     return items, int(pages)
 
+  def _update_downloaded_state(self, cur, id, state):
+    cur.execute("UPDATE shixin SET downloaded=%s WHERE id=%s" % (state, id))
+    self.conn.commit()
+
   def detail_crawler(self):
     self.get_captcha()
     cur = self.conn.cursor()
+
+    # Download new items.
     cur.execute("SELECT id FROM shixin WHERE downloaded=0")
     data = cur.fetchall()
-    logging.info("[%d] items to download" % len(data))
-    i = 0
+    logging.info("[%d] new items to download" % len(data))
 
+    success = 0
     for row in data:
       if self._detail_item_crawler(row[0]):
-        i += 1
-        cur.execute("UPDATE shixin SET downloaded=1 WHERE id=%s" % row[0])
-        self.conn.commit()
-        logging.info("Successfully downloaded detail (id=%s)  [%d] item downloaded." % (row[0], i))
+        success += 1
+        self._update_downloaded_state(cur, row[0], 1)
+        logging.info("Successfully downloaded detail (id=%s)  [%d] item downloaded." % (
+          row[0], success))
       else:
+        self._update_downloaded_state(cur, row[0], -1)
         logging.error("Failed to download detail (id=%s)" % row[0])
-        self.get_captcha()
 
+        self.get_captcha()
+    logging.info("[REPORT] [%s] new items to download, [%d] succeed, [%d] failed." % (
+      len(data), success, len(data) - success))
+
+    cur.execute("SELECT id FROM shixin WHERE downloaded=0")
+    data = cur.fetchall()
+    logging.info("[%d] new items to download" % len(data))
+
+    # retry failed items.
+    cur.execute("SELECT id FROM shixin WHERE downloaded=-1")
+    data = cur.fetchall()
+    logging.info("[%d] failed items to retry download" % len(data))
+
+    success = 0
+    for row in data:
+      if self._detail_item_crawler(row[0]):
+        success += 1
+        self._update_downloaded_state(cur, row[0], 1)
+        logging.info("Successfully downloaded detail (id=%s)  [%d] item downloaded." % (
+          row[0], success))
+      else:
+        self._update_downloaded_state(cur, row[0], -2)
+        logging.error("Failed to download detail (id=%s)" % row[0])
+
+        self.get_captcha()
+    logging.info("[REPORT] [%s] failed items to retry download, [%d] succeed, [%d] failed." % (
+      len(data), success, len(data) - success))
 
   def _detail_item_crawler(self, id):
     url = DETAIL_URL % (id, self.randcode)
@@ -163,7 +200,8 @@ class Shixin:
     if MESSAGE_CAPTCHA_ERROR in html:
       logging.error('Captcha error')
       return False
-    detail_filepath = os.path.join(os.path.split(os.path.realpath(__file__))[0], DETAIL_FILE % id)
+    detail_filepath = os.path.join(os.path.split(
+      os.path.realpath(__file__))[0], DETAIL_FILE % id)
     f = open(detail_filepath, 'w')
     f.write(html)
     f.close()
@@ -174,7 +212,7 @@ def main():
   util.init_logging()
   logging.info("Shixin Crawler started")
   c = Shixin()
-  #c.list_crawler(range(1, 100))
+  c.list_crawler(range(1, 10))
   c.detail_crawler()
 
 if __name__ == '__main__':

@@ -26,7 +26,10 @@ def urlfetch(url, data=None, cookie='', referer='', opener=default_opener, timeo
   logging.info("[url]:%s [data]:%s" % (url, data))
   headers = dict(DEFAULT_HEADERS)
   if cookie:
-    headers['Cookie'] = cookie
+    if isinstance(cookie, dict):
+      headers['Cookie'] = ' '.join(['%s=%s;' % x for x in cookie.items()])
+    else:
+      headers['Cookie'] = cookie
   if referer:
     headers['Referer'] = referer
   if isinstance(data, dict):
@@ -53,10 +56,17 @@ def urlfetch(url, data=None, cookie='', referer='', opener=default_opener, timeo
   return html, res
 
 
-def init_cookie(html=None, res=None):
+def update_cookie(html=None, res=None, cookie=None):
   if html == None and res == None:
     html, res = urlfetch(HOMEPAGE_URL)
-  return ' '.join([_resolve_521_html(html), res.headers['set-cookie'].split(' ')[0]])
+
+  if not cookie:
+    cookie = {}
+  cookie.update(dict((_resolve_521_html(html).strip(';').split('='),)))
+  if 'set-cookie' in res.headers:
+    cookie.update(
+      dict((res.headers['set-cookie'].split(' ')[0].strip(';').split('='),)))
+  return cookie
 
 
 JS_PREFIX = """var document = {cookie:''};
