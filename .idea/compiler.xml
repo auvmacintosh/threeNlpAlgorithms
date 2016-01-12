@@ -24,6 +24,7 @@
         <processorPath useClasspath="true" />
         <module name="einfo2" />
         <module name="extractor" />
+        <module name="StringHelpers" />
       </profile>
       <profile default="false" name="Annotation profile for readabilityBUNDLE" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
@@ -31,13 +32,6 @@
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
         <module name="readabilityBUNDLE" />
-      </profile>
-      <profile default="false" name="Annotation profile for StringHelpers" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="true" />
-        <module name="StringHelpers" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
