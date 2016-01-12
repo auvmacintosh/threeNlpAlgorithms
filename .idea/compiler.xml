@@ -17,16 +17,35 @@
       <profile default="true" name="Default" enabled="false">
         <processorPath useClasspath="true" />
       </profile>
-      <profile default="false" name="Annotation profile for snacktory" enabled="true">
+      <profile default="false" name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
-        <module name="snacktory" />
+        <module name="einfo2" />
+        <module name="extractor" />
+      </profile>
+      <profile default="false" name="Annotation profile for readabilityBUNDLE" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="readabilityBUNDLE" />
+      </profile>
+      <profile default="false" name="Annotation profile for StringHelpers" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="StringHelpers" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="snacktory" target="1.6" />
+      <module name="einfo" target="1.5" />
+      <module name="einfo2" target="1.5" />
+      <module name="extractor" target="1.5" />
+      <module name="readabilityBUNDLE" target="1.5" />
+      <module name="StringHelpers" target="1.5" />
     </bytecodeTargetLevel>
   </component>
 </project>
