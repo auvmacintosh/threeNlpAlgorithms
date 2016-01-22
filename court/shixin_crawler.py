@@ -16,6 +16,7 @@ except:
   import BeautifulSoup
 
 
+INDEX_URL = 'http://shixin.court.gov.cn/'
 LIST_URL = 'http://shixin.court.gov.cn/findd'
 DETAIL_URL = 'http://shixin.court.gov.cn/findDetai?id=%s&pCode=%s'
 CAPTCHA_URL = 'http://shixin.court.gov.cn/image.jsp'
@@ -43,7 +44,7 @@ class Shixin:
     data = res = None
     for i in range(RETRY_TIMES):
       try:
-        data, res = util.urlfetch(CAPTCHA_URL, cookie=self.cookie)
+        data, res = util.urlfetch(INDEX_URL, cookie=self.cookie)
       except Exception, ex:
         logging.error("%s", ex)
         time.sleep(1)
@@ -53,6 +54,13 @@ class Shixin:
         time.sleep(1)
         self.cookie = util.update_cookie(data, res, self.cookie)
         logging.info("Got 521, refresh cookie: %s", self.cookie)
+
+      try:
+        data, res = util.urlfetch(CAPTCHA_URL, cookie=self.cookie)
+      except Exception, ex:
+        logging.error("%s", ex)
+        time.sleep(1)
+        continue
       if res.code == 200:
         break
 
@@ -135,7 +143,8 @@ class Shixin:
       date = tds[2].text
       number = tds[3].text
       id_ = tds[4].a['id']
-      items.append((id_, number, name, date))
+      item = (id_, number, name, date)
+      items.append(item)
 
     last_page_soup = soup.find('a', text='尾页')
     pages = re.search(r'gotoPage\((\d\d+)\)',
