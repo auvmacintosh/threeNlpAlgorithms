@@ -10,7 +10,10 @@ import sqlite3
 from StringIO import StringIO
 from captcha import Captcha
 from PIL import Image
-from bs4 import BeautifulSoup
+try:
+  from bs4 import BeautifulSoup
+except:
+  import BeautifulSoup
 
 
 LIST_URL = 'http://shixin.court.gov.cn/findd'
