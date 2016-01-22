@@ -4,8 +4,14 @@ import sys
 import os
 import zlib
 import logging
-from bs4 import BeautifulSoup
-from pyv8 import PyV8
+try:
+  from bs4 import BeautifulSoup
+except:
+  import BeautifulSoup
+try:
+  from pyv8 import PyV8
+except:
+  import PyV8
 
 DEFAULT_HEADERS = {
   'Accept': '*/*',
