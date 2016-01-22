@@ -2,8 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/einfo.iml" filepath="$PROJECT_DIR$/.idea/einfo.iml" />
-      <module fileurl="file://$PROJECT_DIR$/snacktory/snacktory.iml" filepath="$PROJECT_DIR$/snacktory/snacktory.iml" />
+      <module fileurl="file://$PROJECT_DIR$/StringHelpers/StringHelpers.iml" filepath="$PROJECT_DIR$/StringHelpers/StringHelpers.iml" />
+      <module fileurl="file://$PROJECT_DIR$/einfo.iml" filepath="$PROJECT_DIR$/einfo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/extractor/extractor.iml" filepath="$PROJECT_DIR$/extractor/extractor.iml" />
+      <module fileurl="file://$PROJECT_DIR$/readabilityBUNDLE/readabilityBUNDLE.iml" filepath="$PROJECT_DIR$/readabilityBUNDLE/readabilityBUNDLE.iml" />
     </modules>
   </component>
 </project>
