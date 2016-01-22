@@ -4,10 +4,7 @@ import sys
 import os
 import zlib
 import logging
-try:
-  from bs4 import BeautifulSoup
-except:
-  import BeautifulSoup
+from bs4 import BeautifulSoup
 try:
   from pyv8 import PyV8
 except:

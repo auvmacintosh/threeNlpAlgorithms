@@ -10,10 +10,7 @@ import sqlite3
 from StringIO import StringIO
 from captcha import Captcha
 from PIL import Image
-try:
-  from bs4 import BeautifulSoup
-except:
-  import BeautifulSoup
+from bs4 import BeautifulSoup
 
 
 INDEX_URL = 'http://shixin.court.gov.cn/'
@@ -231,7 +228,7 @@ def main():
   util.init_logging()
   logging.info("Shixin Crawler started")
   c = Shixin()
-  c.list_crawler(range(1, 10))
+  c.list_crawler(range(1, 500))
   c.detail_crawler()
 
 if __name__ == '__main__':
