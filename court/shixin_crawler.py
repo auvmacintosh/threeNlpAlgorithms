@@ -82,13 +82,20 @@ class Shixin:
         except:
           continue
 
-        logging.info("Got [%d] items from page [%d] (total page: [%d])" % (
-          len(items), p, total_pages))
+        if items:
+          logging.info("Got [%d] items from page [%d] (total page: [%d])" % (
+            len(items), p, total_pages))
+        else:
+          logging.info("Failed to get items from page [%d] (total page: [%d])" % (
+            p, total_pages))
         break
       cur.execute('SELECT count(*) FROM shixin')
       data = cur.fetchone()
       before_item_count = data[0]
       logging.info("[%d] lines in Database" % data[0])
+      if not items:
+        logging.error("failed to get items.")
+        continue
       for item in items:
         cur.execute(
           "INSERT OR IGNORE INTO shixin (id, number, name, date) VALUES(%s, '%s', '%s', '%s')" % item)
