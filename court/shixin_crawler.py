@@ -18,11 +18,12 @@ LIST_URL = 'http://shixin.court.gov.cn/findd'
 DETAIL_URL = 'http://shixin.court.gov.cn/findDetai?id=%s&pCode=%s'
 CAPTCHA_URL = 'http://shixin.court.gov.cn/image.jsp'
 LIST_PAGE_SIZE = 1000
-LIST_FILE = 'data/shixin_list.txt'
+SAVEPATH = 'data/shixin'
 DETAIL_FILE = 'data/shixin/%s.txt'
 DB = 'data/shixin.db'
 RETRY_TIMES = 3
 MESSAGE_CAPTCHA_ERROR = '验证码错误，请重新输入'
+BASE_PATH = os.path.split(os.path.realpath(__file__))[0]
 
 
 class CaptchaError(Exception):
@@ -154,6 +155,14 @@ class Shixin:
     self.conn.commit()
 
   def detail_crawler(self):
+    save_dir = os.path.join(BASE_PATH, SAVEPATH)
+    if not os.path.exists(save_dir):
+      try:
+        os.makedirs(save_dir)
+        logging.info("created dir [%s]" % save_dir)
+      except Exception, ex:
+        logging.error("failed to create dir [%s], ex" % (save_dir, ex))
+
     self.get_captcha()
     cur = self.conn.cursor()
 

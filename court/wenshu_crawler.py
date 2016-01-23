@@ -126,7 +126,7 @@ def main():
   util.init_logging()
   logging.info("Wenshu Crawler started")
   c = Wenshu()
-  c.crawl(days=40)
+  c.crawl(days=365)
 
 if __name__ == '__main__':
   main()
