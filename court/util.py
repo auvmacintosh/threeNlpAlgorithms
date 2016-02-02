@@ -19,7 +19,7 @@ DEFAULT_HEADERS = {
   'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.106 Safari/537.36'
 }
 
-DEFAULT_TIMEOUT = 30
+DEFAULT_TIMEOUT = 120
 HOMEPAGE_URL = 'http://shixin.court.gov.cn/'
 
 default_opener = urllib2.build_opener()

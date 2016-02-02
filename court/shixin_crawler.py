@@ -1,6 +1,7 @@
 #!/usr/bin/python
 #coding: utf8
 
+import sys
 import os
 import time
 import re
@@ -17,6 +18,8 @@ INDEX_URL = 'http://shixin.court.gov.cn/'
 LIST_URL = 'http://shixin.court.gov.cn/findd'
 DETAIL_URL = 'http://shixin.court.gov.cn/findDetai?id=%s&pCode=%s'
 CAPTCHA_URL = 'http://shixin.court.gov.cn/image.jsp'
+
+DEFAULT_PAGES = 10
 LIST_PAGE_SIZE = 1000
 SAVEPATH = 'data/shixin'
 DETAIL_FILE = 'data/shixin/%s.txt'
@@ -234,10 +237,15 @@ class Shixin:
 
 
 def main():
+  # amount of pages will retrieve.
+  pages = DEFAULT_PAGES
+  if len(sys.argv) >= 2:
+    pages = int(sys.argv[1])
+
   util.init_logging()
   logging.info("Shixin Crawler started")
   c = Shixin()
-  c.list_crawler(range(1, 500))
+  c.list_crawler(range(1, pages))
   c.detail_crawler()
 
 if __name__ == '__main__':

@@ -1,6 +1,7 @@
 #!/usr/bin/python
 #coding: utf8
 
+import sys
 import os
 import json
 import datetime
@@ -14,6 +15,7 @@ import traceback
 LIST_URL = 'http://www.court.gov.cn/zgcpwsw/List/ListContent'
 LIST_PAGE_SIZE = 20
 LIST_PAGE_LIMIT = 20
+DEFAULT_DAYS = 60
 SAVEPATH_TEMPLATE = 'data/wenshu/%s/%s'
 FILENAME_TEMPLATE = '%s.txt'
 PROVINCES = '北京市,天津市,河北省,山西省,内蒙古自治区,辽宁省,吉林省,黑龙江省,上海市,江苏省,浙江省,安徽省,福建省,江西省,山东省,河南省,湖北省,湖南省,广东省,广西壮族自治区,海南省,重庆市,四川省,贵州省,云南省,西藏自治区,陕西省,甘肃省,青海省,宁夏回族自治区,新疆维吾尔自治区,新疆维吾尔自治区高级人民法院生产建设兵团分院'.split(
@@ -112,7 +114,8 @@ class Wenshu:
       overwrite = os.path.isfile(file_path)
       try:
         f = open(file_path, 'w')
-        json_str = json.dumps(item, ensure_ascii=False, encoding='utf8', indent=2)
+        json_str = json.dumps(item, ensure_ascii=False,
+                              encoding='utf8', indent=2)
         f.write(json_str.encode('utf8'))
         size = f.tell()
         f.close()
@@ -123,10 +126,15 @@ class Wenshu:
 
 
 def main():
+  # amount of days will retrieve.
+  days = DEFAULT_DAYS
+  if len(sys.argv) >= 2:
+    days = int(sys.argv[1])
+
   util.init_logging()
   logging.info("Wenshu Crawler started")
   c = Wenshu()
-  c.crawl(days=365)
+  c.crawl(days=days)
 
 if __name__ == '__main__':
   main()
