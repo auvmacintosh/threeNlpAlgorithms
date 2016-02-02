@@ -148,8 +148,12 @@ public class Extractor {
 
 
     public static void main(String[] args) {
+        if(args.length != 2){
+            System.out.println("usage: java -jar Extractor input_dir output_dir");
+            return;
+        }
         Extractor extractor = new Extractor();
-        extractor.extractDir("F:\\喵\\down", "F:\\喵\\contentr1s");
+        extractor.extractDir(args[0], args[1]);
     }
 
 }
