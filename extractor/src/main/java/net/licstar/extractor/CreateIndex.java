@@ -36,7 +36,7 @@ public class CreateIndex {
     }
 
 
-    private String detectEncoding(String path) throws IOException {
+    static private String detectEncoding(String path) throws IOException {
         byte[] buf = new byte[4096];
         String fileName = path;
         java.io.FileInputStream fis = new java.io.FileInputStream(fileName);
@@ -66,7 +66,7 @@ public class CreateIndex {
         }
     }
 
-    private String readFileAsString(String filePath)
+    static private String readFileAsString(String filePath)
             throws java.io.IOException {
         StringBuilder fileData = new StringBuilder(1000);
         FileInputStream fis = new FileInputStream(filePath);
@@ -101,7 +101,7 @@ public class CreateIndex {
                     try {
                         bw.append(file.getName());
                         bw.append(" ");
-                        bw.append(MD5(readFileAsString(file.getAbsolutePath())));
+                        bw.append(getFileMD5(file.getAbsolutePath()));
                         bw.append("\n");
 //EncodingDetector ed=new EncodingDetector();
                         // System.out.println( detectEncoding(file.getAbsolutePath()));
@@ -119,6 +119,9 @@ public class CreateIndex {
         fw.close();
     }
 
+    static final public String getFileMD5(String file) throws IOException {
+        return MD5(readFileAsString(file));
+    }
 
     public static void main(String[] args) {
         if(args.length != 2){
