@@ -16,7 +16,7 @@ LIST_URL = 'http://www.court.gov.cn/zgcpwsw/List/ListContent'
 LIST_PAGE_SIZE = 20
 LIST_PAGE_LIMIT = 20
 DEFAULT_DAYS = 60
-SAVEPATH_TEMPLATE = 'data/wenshu/%s/%s'
+SAVEPATH_TEMPLATE = 'data/wenshu/%s'
 FILENAME_TEMPLATE = '%s.txt'
 PROVINCES = '北京市,天津市,河北省,山西省,内蒙古自治区,辽宁省,吉林省,黑龙江省,上海市,江苏省,浙江省,安徽省,福建省,江西省,山东省,河南省,湖北省,湖南省,广东省,广西壮族自治区,海南省,重庆市,四川省,贵州省,云南省,西藏自治区,陕西省,甘肃省,青海省,宁夏回族自治区,新疆维吾尔自治区,新疆维吾尔自治区高级人民法院生产建设兵团分院'.split(
   ',')
@@ -27,7 +27,19 @@ BASE_PATH = os.path.split(os.path.realpath(__file__))[0]
 class Wenshu:
 
   def __init__(self):
-    pass
+    self.cookie = {}
+
+  def get_cookie(self):
+    try:
+      data, res = util.urlfetch(LIST_URL, cookie=self.cookie)
+    except Exception, ex:
+      logging.error("%s", ex)
+      time.sleep(1)
+
+    if res.code == 521:
+      self.cookie = util.update_cookie(data, res, self.cookie)
+      logging.info("Got 521, refresh cookie: %s", self.cookie)
+
 
   def crawl_page(self, page=1, page_size=LIST_PAGE_SIZE, province=None, date=None):
     params = [
@@ -46,7 +58,7 @@ class Wenshu:
     for i in range(RETRY_TIMES):
       html = ''
       try:
-        html, res = util.urlfetch(LIST_URL, data=param)
+        html, res = util.urlfetch(LIST_URL, data=param, cookie=self.cookie)
         data = json.loads(html)
         data = json.loads(data)
       except Exception, ex:
@@ -97,7 +109,7 @@ class Wenshu:
 
   def _save_items(self, items, province, date):
     save_dir = os.path.join(BASE_PATH, SAVEPATH_TEMPLATE %
-                            (province, date.strftime("%Y%m%d")))
+                            (date.strftime("%Y%m%d")))
     if not os.path.exists(save_dir):
       try:
         os.makedirs(save_dir)
@@ -134,6 +146,7 @@ def main():
   util.init_logging()
   logging.info("Wenshu Crawler started")
   c = Wenshu()
+  c.get_cookie()
   c.crawl(days=days)
 
 if __name__ == '__main__':
