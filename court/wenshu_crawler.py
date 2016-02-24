@@ -31,13 +31,13 @@ class Wenshu:
 
   def get_cookie(self):
     try:
-      data, res = util.urlfetch(LIST_URL, cookie=self.cookie)
+      data, res = util.urlfetch(LIST_URL)
     except Exception, ex:
       logging.error("%s", ex)
       time.sleep(1)
 
     if res.code == 521:
-      self.cookie = util.update_cookie(data, res, self.cookie)
+      self.cookie = util.update_cookie(data, res)
       logging.info("Got 521, refresh cookie: %s", self.cookie)
 
 
@@ -66,6 +66,8 @@ class Wenshu:
         if html:
           logging.error("RESPONSE: %s" % html[:100])
         traceback.print_exc()
+        if ex.code == 521:
+          self.get_cookie()
         continue
       print json.dumps(data, ensure_ascii=False)[:100]
       break
