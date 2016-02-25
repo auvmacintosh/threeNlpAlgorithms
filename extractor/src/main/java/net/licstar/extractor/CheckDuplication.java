@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Scanner;
 
 /**
- * Created by zxm on 2016/2/3.
+ * Created by licstar on 2016/2/3.
  */
 public class CheckDuplication {
 
@@ -19,7 +19,7 @@ public class CheckDuplication {
             return;
         }
         try {
-            String md5 = CreateIndex.getFileMD5(args[0]);
+            String md5 = FileHash.getMD5(args[0]);
             List<String> result = new ArrayList<String>();
 
             FileInputStream fis = new FileInputStream(args[1]);

@@ -22,5 +22,10 @@
             <artifactId>readabilityBUNDLE</artifactId>
             <version>0.0.1</version>
         </dependency>
+        <dependency>
+            <groupId>com.chenlb.mmseg4j</groupId>
+            <artifactId>mmseg4j-core-with-dic</artifactId>
+            <version>1.8.6</version>
+        </dependency>
     </dependencies>
 </project>
