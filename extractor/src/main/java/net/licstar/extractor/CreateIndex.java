@@ -25,7 +25,7 @@ public class CreateIndex {
                     try {
                         bw.append(file.getName());
                         bw.append(" ");
-                        bw.append(FileHash.getMD5(file.getAbsolutePath()));
+                        bw.append(FileHash.getSimHash(file.getAbsolutePath()));
                         bw.append("\n");
 //EncodingDetector ed=new EncodingDetector();
                         // System.out.println( detectEncoding(file.getAbsolutePath()));
