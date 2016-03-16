@@ -19,6 +19,8 @@ LIST_URL = 'http://shixin.court.gov.cn/findd'
 DETAIL_URL = 'http://shixin.court.gov.cn/findDetai?id=%s&pCode=%s'
 CAPTCHA_URL = 'http://shixin.court.gov.cn/image.jsp'
 
+SYMBOL_521 = '<noscript>'
+
 DEFAULT_PAGES = 10
 LIST_PAGE_SIZE = 1000
 SAVEPATH = 'data/shixin'
@@ -50,11 +52,19 @@ class Shixin:
         logging.error("%s", ex)
         time.sleep(1)
         continue
+      logging.debug("Response code: %s" % res.code)
 
-      if res.code == 521:
+      if res.code == 521 or SYMBOL_521 in data:
         time.sleep(1)
         self.cookie = util.update_cookie(data, res, self.cookie)
-        logging.info("Got 521, refresh cookie: %s", self.cookie)
+        logging.info("Got 521 (%s), refresh cookie: %s" % (res.code, self.cookie))
+        try:
+          data, res = util.urlfetch(INDEX_URL, cookie=self.cookie)
+        except Exception, ex:
+          logging.error("%s", ex)
+          time.sleep(1)
+          continue
+        logging.debug("Get index page [%s bytes], response code [%s]" % (len(data), res.code))
 
       try:
         data, res = util.urlfetch(CAPTCHA_URL, cookie=self.cookie)
@@ -77,6 +87,7 @@ class Shixin:
         new_cookie = res.headers['Set-Cookie'].split(' ')[0]
         self.cookie.update(dict((new_cookie.strip(';').split('='),)))
         logging.info("Got cookie with captcha: %s", new_cookie)
+        logging.info("Current cookie: %s", self.cookie)
     except Exception, ex:
       logging.error(str(ex))
 
@@ -95,10 +106,10 @@ class Shixin:
           continue
 
         if items:
-          logging.info("Got [%d] items from page [%d] (total page: [%d])" % (
+          logging.info("Got [%d] items from page [%s] (total page: [%s])" % (
             len(items), p, total_pages))
         else:
-          logging.info("Failed to get items from page [%d] (total page: [%d])" % (
+          logging.info("Failed to get items from page [%s] (total page: [%s])" % (
             p, total_pages))
         break
       cur.execute('SELECT count(*) FROM shixin')
@@ -132,6 +143,7 @@ class Shixin:
       logging.error('wrong captcha')
       raise CaptchaError()
 
+    print html
     soup = BeautifulSoup(html, "html.parser")
     trs = soup.find('tbody').findAll('tr')
     items = []
