@@ -113,7 +113,7 @@ public class FileHash {
     private static final ComplexSeg COMPLEX_SEG = new ComplexSeg(DIC);
     private static final MaxWordSeg MAX_WORD_SEG = new MaxWordSeg(DIC);
 
-    static final public String getSimHash(String file) throws IOException {
+    static final public ArrayList<String> getSegWordsFromFile(String file) throws IOException {
         String text = readFileAsString(file);
 
         //1.解析指定格式
@@ -121,6 +121,13 @@ public class FileHash {
 
         //2.分词
         ArrayList<String> seg = segText(content, COMPLEX_SEG);
+
+        return seg;
+    }
+
+    static final public String getSimHash(String file) throws IOException {
+        //2.分词
+        ArrayList<String> seg = getSegWordsFromFile(file);
 
         //3.固定的随机embedding，求和
         double[] sum = new double[SimHashBits];
@@ -203,8 +210,48 @@ public class FileHash {
 
 
     public static void main(String[] args) {
+        //这段代码是生成训练数据的
         try {
-            System.out.println(getSimHash("D:\\testdata2\\已发布\\64740808.txt"));
+
+
+            File dir = new File("D:\\testdata2\\未发布");
+            FileWriter fw = new FileWriter("D:\\testdata2\\train.txt", false);
+            BufferedWriter bw = new BufferedWriter(fw);
+
+
+            File[] files = dir.listFiles();
+            for (File file : files) {
+                if (!file.isDirectory()) {
+                    try {
+                        File fff = new File("D:\\testdata2\\已发布\\" + file.getName());
+                        if (fff.exists()) {
+                            bw.append("1 ");
+                        } else {
+                            bw.append("0 ");
+                        }
+                        String text = readFileAsString(file.getAbsolutePath());
+                        String content = htmlRemoveTag(text);
+                        ArrayList<String> seg = segText(content, COMPLEX_SEG);
+                        for (String s : seg) {
+                            bw.append(s);
+                            bw.append(" ");
+                        }
+                        // bw.append(FileHash.getSimHash(file.getAbsolutePath()));
+                        bw.append("\n");
+//EncodingDetector ed=new EncodingDetector();
+                        // System.out.println( detectEncoding(file.getAbsolutePath()));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    // System.out.println(file.getName());
+                }
+            }
+
+
+            bw.close();
+            fw.close();
+
+
         } catch (IOException e) {
             e.printStackTrace();
         }
