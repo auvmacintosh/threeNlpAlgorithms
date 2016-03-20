@@ -3,9 +3,7 @@ package net.licstar.extractor;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * Created by licstar on 2016/2/3.
@@ -106,9 +104,17 @@ public class CheckDuplication {
                 System.out.println("cannot find duplication");
             } else {
                 ArrayList<String> a = FileHash.getSegWordsFromFile(args[0]);
+                String ret[] = new String[result.size()];
+                int index = 0;
                 for (String s : result) {
                     ArrayList<String> b = FileHash.getSegWordsFromFile("/root/testdata2/all/" + s);
-                    System.out.println(s + " " + similarity(a, b));
+                    //ret.add();
+                    ret[index++] = similarity(a, b) + " " + s;
+                }
+                // ret.sort();
+                Arrays.sort(ret, Collections.reverseOrder());
+                for (String s : ret) {
+                    System.out.println(s);
                 }
             }
         } catch (IOException e) {
