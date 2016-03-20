@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="16736ba5-0d25-43b3-a3b7-075af6aa4b8d" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/extractor/src/main/java/net/licstar/extractor/CheckDuplication.java" afterPath="$PROJECT_DIR$/extractor/src/main/java/net/licstar/extractor/CheckDuplication.java" />
     </list>
     <ignored path="einfo2.iws" />
@@ -63,8 +62,8 @@
       <file leaf-file-name="CheckDuplication.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/extractor/src/main/java/net/licstar/extractor/CheckDuplication.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-2.829843">
-              <caret line="30" column="35" selection-start-line="30" selection-start-column="35" selection-end-line="30" selection-end-column="35" />
+            <state vertical-scroll-proportion="0.35340315">
+              <caret line="94" column="90" selection-start-line="94" selection-start-column="90" selection-end-line="94" selection-end-column="90" />
               <folding>
                 <element signature="e#2038#2046#0" expanded="true" />
               </folding>
@@ -1168,8 +1167,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/extractor/src/main/java/net/licstar/extractor/CheckDuplication.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-2.829843">
-          <caret line="30" column="35" selection-start-line="30" selection-start-column="35" selection-end-line="30" selection-end-column="35" />
+        <state vertical-scroll-proportion="0.35340315">
+          <caret line="94" column="90" selection-start-line="94" selection-start-column="90" selection-end-line="94" selection-end-column="90" />
           <folding>
             <element signature="e#2038#2046#0" expanded="true" />
           </folding>

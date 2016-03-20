@@ -92,7 +92,7 @@ public class CheckDuplication {
             } else {
                 ArrayList<String> a = FileHash.getSegWordsFromFile(args[0]);
                 for (String s : result) {
-                    ArrayList<String> b = FileHash.getSegWordsFromFile("~/testdata2/all/" + s);
+                    ArrayList<String> b = FileHash.getSegWordsFromFile("/root/testdata2/all/" + s);
                     System.out.println(s + " " + distance(a, b));
                 }
             }
