@@ -26,10 +26,15 @@ public class CheckDuplication {
                 int v = 5000;
                 if (i == 0 && j == 0) {
                     v = 0;
-                } else if (i > 0) {
+                }
+                if (i > 0) {
                     v = Math.min(v, dist[i - 1][j]);
-                } else if (j > 0) {
+                }
+                if (j > 0) {
                     v = Math.min(v, dist[i][j - 1]);
+                }
+                if (i > 0 && j > 0) {
+                    v = Math.min(v, dist[i - 1][j - 1]);
                 }
 
                 if (a.get(i).equals(b.get(j))) {
@@ -68,6 +73,16 @@ public class CheckDuplication {
     }
 
     public static void main(String[] args) {
+//        try {
+//            ArrayList<String> a = FileHash.getSegWordsFromFile("D:\\testdata2\\未发布\\64929740.txt");
+//
+//            ArrayList<String> b = FileHash.getSegWordsFromFile("D:\\testdata2\\未发布\\64929739.txt");
+//            System.out.println( similarity(a, b));
+//        } catch (IOException e) {
+//
+//        }
+
+
         if (args.length != 2) {
             System.out.println("usage: java -jar CheckDuplication input_file index_file");
             return;
@@ -93,7 +108,7 @@ public class CheckDuplication {
                 ArrayList<String> a = FileHash.getSegWordsFromFile(args[0]);
                 for (String s : result) {
                     ArrayList<String> b = FileHash.getSegWordsFromFile("/root/testdata2/all/" + s);
-                    System.out.println(s + " " + distance(a, b));
+                    System.out.println(s + " " + similarity(a, b));
                 }
             }
         } catch (IOException e) {
