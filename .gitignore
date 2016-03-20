@@ -58,3 +58,4 @@ target/
 
 # Vim swap file
 *.swp
+.idea/workspace.xml
