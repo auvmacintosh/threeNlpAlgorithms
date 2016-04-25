@@ -33,16 +33,30 @@ public class Extractor {
     }
 
     public String extractString(String str) throws Exception {
-        if(str.isEmpty()) //空字符串直接不转换
+        if (str.isEmpty()) //空字符串直接不转换
             return "<title></title><content></content>";
 
         Article article = new Article();
         ContentExtractor ce = new ContentExtractor();
 
+        //bad case特殊处理
+        String bc = "<div class=\"commentList\"";
+        while (true) {
+            int p = str.indexOf(bc);
+            if (p != -1) {
+                int e = str.indexOf("</div>", p);
+                if (e != -1) {
+                    str = str.substring(0, p) + str.substring(e);
+                }
+            } else {
+                break;
+            }
+        }
+
+
         article = ce.extractContent(str, "ReadabilitySnack");
 
         //System.out.println("Content : "+article.getCleanedArticleText());
-
 
 
         //JResult res = extractor.extractContent(str);
@@ -54,12 +68,12 @@ public class Extractor {
         sb.append("<content>");
 
         sb.append(article.getCleanedArticleText());
-       // for (String t : res.getTextList()) {
-      //      sb.append(t);
-     //       sb.append("\r\n");
-     //   }
+        // for (String t : res.getTextList()) {
+        //      sb.append(t);
+        //       sb.append("\r\n");
+        //   }
         sb.append("</content>");
-       // sb.append(article.getCleanedDocument().body().toString());
+        // sb.append(article.getCleanedDocument().body().toString());
 
         return sb.toString();
     }
@@ -148,7 +162,7 @@ public class Extractor {
 
 
     public static void main(String[] args) {
-        if(args.length != 2){
+        if (args.length != 2) {
             System.out.println("usage: java -jar Extractor input_dir output_dir");
             return;
         }
