@@ -214,21 +214,17 @@ public class FileHash {
         try {
 
 
-            File dir = new File("D:\\testdata2\\未发布");
-            FileWriter fw = new FileWriter("D:\\testdata2\\train.txt", false);
+            File dir = new File("D:\\testdata2\\发布的");
+            FileWriter fw = new FileWriter("D:\\testdata2\\train_yes.txt", false);
             BufferedWriter bw = new BufferedWriter(fw);
-
+            String tag = "1 ";
 
             File[] files = dir.listFiles();
             for (File file : files) {
                 if (!file.isDirectory()) {
                     try {
-                        File fff = new File("D:\\testdata2\\已发布\\" + file.getName());
-                        if (fff.exists()) {
-                            bw.append("1 ");
-                        } else {
-                            bw.append("0 ");
-                        }
+                        bw.append(tag);
+
                         String text = readFileAsString(file.getAbsolutePath());
                         String content = htmlRemoveTag(text);
                         ArrayList<String> seg = segText(content, COMPLEX_SEG);
