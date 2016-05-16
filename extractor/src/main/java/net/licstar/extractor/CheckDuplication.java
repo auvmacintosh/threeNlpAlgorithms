@@ -9,6 +9,7 @@ import java.util.*;
  * Created by licstar on 2016/2/3.
  */
 public class CheckDuplication {
+    static final int WordCountLimit = 2000; //字数限制，大于2000词的文档，只看前2000词。
 
     /**
      * 编辑距离
@@ -21,7 +22,7 @@ public class CheckDuplication {
         int dist[][] = new int[a.size() + 1][b.size() + 1];
         for (int i = 0; i < a.size(); i++) {
             for (int j = 0; j < b.size(); j++) {
-                int v = 5000;
+                int v = WordCountLimit + 1;
                 if (i == 0 && j == 0) {
                     v = 0;
                 }
@@ -62,10 +63,10 @@ public class CheckDuplication {
             suffix = "-part";
         }
 
-        if (a.size() > 2000)
-            a = a.subList(0, 2000);
-        if (b.size() > 2000)
-            b = b.subList(0, 2000);
+        if (a.size() > WordCountLimit)
+            a = a.subList(0, WordCountLimit);
+        if (b.size() > WordCountLimit)
+            b = b.subList(0, WordCountLimit);
 
         int dist = distance(a, b);
         int same = a.size() - dist;
