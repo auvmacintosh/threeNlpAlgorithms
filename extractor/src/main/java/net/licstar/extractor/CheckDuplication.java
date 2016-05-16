@@ -52,22 +52,38 @@ public class CheckDuplication {
      * @param b
      * @return
      */
-    private static double similarity(ArrayList<String> a, ArrayList<String> b) {
+    private static String similarity(List<String> a, List<String> b) {
         if (a.size() < b.size()) {
             return similarity(b, a);
         }
+        //可能会有半篇文章相似，因此去掉这个文章长度比较的逻辑
+        String suffix = "";
         if (a.size() > b.size() * 1.5) {
-            return 0;
+            suffix = "-part";
         }
-        int dist = 0;
-        int size = a.size();
-        if (b.size() > 2000) {
-            size = 2000;
-            dist = distance(a.subList(0, 2000), b.subList(0, 2000));
-        } else {
-            dist = distance(a, b);
+
+        if (a.size() > 2000)
+            a = a.subList(0, 2000);
+        if (b.size() > 2000)
+            b = b.subList(0, 2000);
+
+        int dist = distance(a, b);
+        int same = a.size() - dist;
+
+
+        Double ret = 1.0 * same / b.size();
+        return ret.toString() + suffix;
+    }
+
+    private static double hashSimilarity(String a, String b) {
+        int total = a.length();
+        int same = 0;
+        for (int i = 0; i < a.length() && i < b.length(); i++) {
+            if (a.charAt(i) == b.charAt(i)) {
+                same++;
+            }
         }
-        return 1 - 1.0 * dist / size;
+        return 1.0 * same / total;
     }
 
     public static void main(String[] args) {
@@ -86,7 +102,7 @@ public class CheckDuplication {
             return;
         }
         try {
-            String md5 = FileHash.getSimHash(args[0]);
+            String hash = FileHash.getSimHash(args[0]);
             List<String> result = new ArrayList<String>();
 
             FileInputStream fis = new FileInputStream(args[1]);
@@ -95,21 +111,32 @@ public class CheckDuplication {
             while (sc.hasNext()) {
                 String line = sc.nextLine();
                 String[] part = line.split(" ");
-                if (part[1].equals(md5)) {
-                    result.add(part[0]);
+                double sim = hashSimilarity(part[1], hash);
+                if (sim > 0.6) { //simhash 足够相似的拿来深度比较
+                    result.add(sim + " " + part[0]);
                 }
             }
 
             if (result.size() == 0) {
                 System.out.println("cannot find duplication");
             } else {
+                //按照simhash 的结果排序
+                String hashResultArr[] = new String[result.size()];
+                hashResultArr = result.toArray(hashResultArr);
+                Arrays.sort(hashResultArr, Collections.reverseOrder());
+
                 ArrayList<String> a = FileHash.getSegWordsFromFile(args[0]);
-                String ret[] = new String[result.size()];
+
+                int maxCompareDocs = 1000; //最多比较最相似的1000个文件，用来调节速度
+                String ret[] = new String[result.size() > maxCompareDocs ? maxCompareDocs : result.size()];
                 int index = 0;
-                for (String s : result) {
+                for (String s_ : hashResultArr) {
+                    String s = s_.split(" ")[1];
                     ArrayList<String> b = FileHash.getSegWordsFromFile("/root/testdata2/all/" + s);
                     //ret.add();
                     ret[index++] = similarity(a, b) + " " + s;
+                    if (index > maxCompareDocs)
+                        break;
                 }
                 // ret.sort();
                 Arrays.sort(ret, Collections.reverseOrder());

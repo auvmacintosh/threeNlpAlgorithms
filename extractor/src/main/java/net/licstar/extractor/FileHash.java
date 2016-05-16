@@ -167,7 +167,7 @@ public class FileHash {
         return result;
     }
 
-    public static final int SimHashBits = 16;
+    public static final int SimHashBits = 100;
 
     /**
      * 删除Html标签
