@@ -7,6 +7,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
+import java.security.MessageDigest;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.regex.Pattern;
+import java.io.*;
 
 /**
  * Created by Administrator on 2016/3/20.
@@ -1265,27 +1271,60 @@ public class Classification {
 
     public static void main(String[] args) {
         if (args.length != 1) {
-            System.out.println("usage: java -jar Classification input_file");
+            System.out.println("usage: java -jar Classification input_dir");
             return;
         }
-        try {
-            HashMap<String, Double> hash = init();
-            ArrayList<String> text = FileHash.getSegWordsFromFile(args[0]);
 
-            double sum = 0;
-            for (String word : text) {
-                if (hash.containsKey(word)) {
-                    sum += hash.get(word);
+        HashMap<String, Double> hash;
+            hash = init();
+
+        File dir = new File(args[0]);
+
+        if (dir.exists()) {
+            File[] files = dir.listFiles();
+            for (File file : files) {
+                if (!file.isDirectory()) {
+                    try {
+                        ArrayList<String> text = FileHash.getSegWordsFromFile(file.getName());
+                        double sum = 0;
+                        for (String word : text) {
+                            if (hash.containsKey(word)) {
+                                sum += hash.get(word);
+                            }
+		                }
+                        System.out.print(file.getName());
+                        System.out.print(String.format(" %.3f", sum));
+                        if (sum > 0)
+                            System.out.print(" yes ");
+                        else
+                            System.out.print(" no ");
+
+                        String fileStr = readFileAsString(file.getName());
+                        String title = fileStr.split("</TITLE>")[0].split(">")[1];
+                        System.out.println(title);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
-            if (sum > 0)
-                System.out.println("yes");
-            else
-                System.out.println("no");
-
-        } catch (IOException e) {
-            e.printStackTrace();
+        } else {
+            System.out.println("文件不存在!");
         }
-
+    }
+    static private String readFileAsString(String filePath)
+            throws java.io.IOException {
+        StringBuilder fileData = new StringBuilder(1000);
+        FileInputStream fis = new FileInputStream(filePath);
+        InputStreamReader isr = new InputStreamReader(fis);
+        BufferedReader reader = new BufferedReader(isr);
+        char[] buf = new char[1024];
+        int numRead = 0;
+        while ((numRead = reader.read(buf)) != -1) {
+            String readData = String.valueOf(buf, 0, numRead);
+            fileData.append(readData);
+            buf = new char[1024];
+        }
+        reader.close();
+        return fileData.toString();
     }
 }
