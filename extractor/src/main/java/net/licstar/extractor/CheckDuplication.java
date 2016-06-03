@@ -1,8 +1,6 @@
 package net.licstar.extractor;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.*;
 
 /**
@@ -27,20 +25,19 @@ public class CheckDuplication {
                     v = 0;
                 }
                 if (i > 0) {
-                    v = Math.min(v, dist[i - 1][j]);
+                    v = Math.min(v, dist[i - 1][j] + 1);
                 }
                 if (j > 0) {
-                    v = Math.min(v, dist[i][j - 1]);
+                    v = Math.min(v, dist[i][j - 1] + 1);
                 }
                 if (i > 0 && j > 0) {
-                    v = Math.min(v, dist[i - 1][j - 1]);
+                    int cost = 0;
+                    if (!a.get(i).equals(b.get(j)))
+                        cost = 1;
+                    v = Math.min(v, dist[i - 1][j - 1] + cost);
                 }
 
-                if (a.get(i).equals(b.get(j))) {
-                    dist[i][j] = v;
-                } else {
-                    dist[i][j] = v + 1;
-                }
+                dist[i][j] = v;
             }
         }
         return dist[a.size() - 1][b.size() - 1];
@@ -87,26 +84,12 @@ public class CheckDuplication {
         return 1.0 * same / total;
     }
 
-    public static void main(String[] args) {
-//        try {
-//            ArrayList<String> a = FileHash.getSegWordsFromFile("D:\\testdata2\\未发布\\64929740.txt");
-//
-//            ArrayList<String> b = FileHash.getSegWordsFromFile("D:\\testdata2\\未发布\\64929739.txt");
-//            System.out.println( similarity(a, b));
-//        } catch (IOException e) {
-//
-//        }
-
-
-        if (args.length != 2) {
-            System.out.println("usage: java -jar CheckDuplication input_file index_file");
-            return;
-        }
+    private static void ProcessOneFile(String intpu_file, String index_file) {
         try {
-            String hash = FileHash.getSimHash(args[0]);
+            String hash = FileHash.getSimHash(intpu_file);
             List<String> result = new ArrayList<String>();
 
-            FileInputStream fis = new FileInputStream(args[1]);
+            FileInputStream fis = new FileInputStream(index_file);
             InputStreamReader isr = new InputStreamReader(fis, "UTF-8");
             Scanner sc = new Scanner(isr);
             while (sc.hasNext()) {
@@ -126,28 +109,59 @@ public class CheckDuplication {
                 hashResultArr = result.toArray(hashResultArr);
                 Arrays.sort(hashResultArr, Collections.reverseOrder());
 
-                ArrayList<String> a = FileHash.getSegWordsFromFile(args[0]);
+                ArrayList<String> a = FileHash.getSegWordsFromFile(intpu_file);
 
                 int maxCompareDocs = 1000; //最多比较最相似的1000个文件，用来调节速度
                 String ret[] = new String[result.size() > maxCompareDocs ? maxCompareDocs : result.size()];
                 int index = 0;
                 for (String s_ : hashResultArr) {
                     String s = s_.split(" ")[1];
-                    ArrayList<String> b = FileHash.getSegWordsFromFile("/root/testdata2/all/" + s);
+                    String simhashv = s_.split(" ")[0];
+                    ArrayList<String> b = FileHash.getSegWordsFromFile("D:\\testdata2\\data\\all\\" + s);
                     //ret.add();
-                    ret[index++] = similarity(a, b) + " " + s;
-                    if (index > maxCompareDocs)
+                    ret[index++] = similarity(a, b) + " " + simhashv + " " + s;
+                    if (index >= maxCompareDocs)
                         break;
                 }
                 // ret.sort();
                 Arrays.sort(ret, Collections.reverseOrder());
                 for (String s : ret) {
+                    if (intpu_file.endsWith("\\" + s.split(" ")[2]))
+                        continue;
                     System.out.println(s);
+                    break;
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
+    public static void main(String[] args) {
+//        try {
+//            ArrayList<String> a = FileHash.getSegWordsFromFile("D:\\testdata2\\未发布\\64929740.txt");
+//
+//            ArrayList<String> b = FileHash.getSegWordsFromFile("D:\\testdata2\\未发布\\64929739.txt");
+//            System.out.println( similarity(a, b));
+//        } catch (IOException e) {
+//
+//        }
+
+
+        if (args.length != 2) {
+            System.out.println("usage: java -jar CheckDuplication input_file index_file");
+            return;
+        }
+        //ProcessOneFile(args[0], args[1]);
+
+        File dir = new File(args[0]);
+        if (dir.exists()) {
+            File[] files = dir.listFiles();
+            for (File file : files) {
+                System.out.print(file.getName() + " ");
+                ProcessOneFile(file.getAbsolutePath(), args[1]);
+            }
+        }
     }
 }
+
