@@ -212,12 +212,15 @@ public class FileHash {
     public static void main(String[] args) {
         //这段代码是生成训练数据的
         try {
+            if (args.length != 3) {
+                System.out.println("usage: java -jar Seg.jar input_dir output_file tag");
+                return;
+            }
 
-
-            File dir = new File("D:\\testdata2\\发布的");
-            FileWriter fw = new FileWriter("D:\\testdata2\\train_yes.txt", false);
+            File dir = new File(args[0]);
+            FileWriter fw = new FileWriter(args[1], false);
             BufferedWriter bw = new BufferedWriter(fw);
-            String tag = "1 ";
+            String tag = args[2] + " ";
 
             File[] files = dir.listFiles();
             for (File file : files) {
