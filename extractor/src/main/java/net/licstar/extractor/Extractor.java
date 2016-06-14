@@ -5,6 +5,8 @@ import com.sree.textbytes.readabilityBUNDLE.ContentExtractor;
 import org.mozilla.universalchardet.UniversalDetector;
 
 import java.io.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by Siwei on 2016/1/6.
@@ -61,10 +63,24 @@ public class Extractor {
 
         //JResult res = extractor.extractContent(str);
         StringBuilder sb = new StringBuilder();
+
+
+
         sb.append("<title>");
         sb.append(article.getTitle());
         sb.append("</title>");
         sb.append("\r\n");
+
+        Pattern p = Pattern.compile("\\d{4}(\\-|\\/|\\.)\\d{1,2}\\1\\d{1,2}");
+        Matcher m = p.matcher(str.replace("年", "-").replace("月", "-"));
+        if (m.find()) {
+            sb.append("<date>");
+            sb.append(m.group());
+            sb.append("</date>");
+            sb.append("\r\n");
+           // System.out.println(m.group());
+        }
+
         sb.append("<content>");
 
         sb.append(article.getCleanedArticleText());
