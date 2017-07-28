@@ -71,14 +71,16 @@ public class Extractor {
         sb.append("</title>");
         sb.append("\r\n");
 
-        Pattern p = Pattern.compile("\\d{4}(\\-|\\/|\\.)\\d{1,2}\\1\\d{1,2}");
-        Matcher m = p.matcher(str.replace("年", "-").replace("月", "-"));
+        Pattern p = Pattern.compile("\\d{4}(\\-|\\/|\\.)\\d{1,2}\\1\\d{1,2}(\\s+\\d{2}:\\d{2}(:\\d{2})?)?");
+        Matcher m = p.matcher(str.replace("年", "-").replace("月", "-").replace("日"," "));
         if (m.find()) {
             sb.append("<date>");
             sb.append(m.group());
             sb.append("</date>");
             sb.append("\r\n");
-           // System.out.println(m.group());
+            System.out.println(m.group());
+        }else{
+            System.out.println("no");
         }
 
         sb.append("<content>");
